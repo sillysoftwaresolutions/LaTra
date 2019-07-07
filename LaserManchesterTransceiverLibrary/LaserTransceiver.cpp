@@ -87,8 +87,6 @@ void LaserTransceiver::tickReceiver() {
   }else if(dTime > bitTime * 0.75){  // ich weiß nicht, ob die Multiplikation mit 0,75 für die Rechenleistung so gut ist
     // => Übertragenes bit, da alle anderen Fälle sind bereits "abgefangen" worden sind
     receiveByteIndex++;
-    // da wusste ich nicht, wie man dann das <receiveByteIndex>te bit des recieveBytes beschreiben kann. Der Wert, der da rein
-    // geschrieben werden soll ist auf jeden Fall thisBit. Ich glaube sowas in der Art:
     receiveByte |= thisBit << receiveByteIndex;
   }  else {
     return;  // => halbe bitTime => wird Ignoriert (durch das return wird diese Flanke nicht als lastRelevantEdge gespeichert)

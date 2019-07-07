@@ -1,3 +1,5 @@
+//Testing program for the library
+
 #include "LaserTransceiver.h"
 
 LaserTransceiver transceiver(3, 20, A0);

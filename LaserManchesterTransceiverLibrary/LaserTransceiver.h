@@ -41,7 +41,7 @@ class LaserTransceiver {
     byte receiveByte = 0;
     byte receiveByteIndex = 0;
     bool receiveByteAvailable = 0;
-    unsigned int bitTime;
+    unsigned int bitTime = 0;
 
 };
 
