@@ -1,9 +1,12 @@
 # LaTra - LaserTransceiver
 An Arduino library and project to transceive data via laser.
 
+# Circuit Diagram
+
+coming soon
 
 # History
 
-v0.1_TC * Erste Version\
-v0.2_TC * Dekodierlogik von unknown hinzugefügt - unvollständig!!!\
-v0.3_TC * Dekodierlogik funktioniert!, Senden und empfangen aus dem gleichen Sketch
+__.07.2019 v0.1_TC * Erste Version\
+__.07.2019 v0.2_TC * Dekodierlogik von unknown hinzugefügt - unvollständig!!!\
+11.07.2019 v0.3_TC * Dekodierlogik funktioniert!, Senden und empfangen aus dem gleichen Sketch
