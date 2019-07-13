@@ -24,15 +24,22 @@ void loop() {
   
   if(toTransmit) {
     toTransmit = 0;
-    char test[msg.length()];
-    msg.toCharArray(test, msg.length());
-    transceiver.transmit(test);
-    
-    while(!transceiver.getTransmitFinished()) {
-      transceiver.tickTransmitter();
+    if(msg.charAt(0) == '!') {
+      msg.remove(0, 1);
+      Serial.println(msg);
+      unsigned int threshold = msg.toInt();
+      msg = "";
+    } else {
+      char test[msg.length()];
+      msg.toCharArray(test, msg.length());
+      transceiver.transmit(test);
+      
+      while(!transceiver.getTransmitFinished()) {
+        transceiver.tickTransmitter();
+      }
+      Serial.println("sent");
+      msg = "";
     }
-    Serial.println("sent");
-    msg = "";
   }
   
   /*

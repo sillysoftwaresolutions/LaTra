@@ -33,6 +33,10 @@ byte LaserTransceiver::getReceiveByte() {
   return receiveByteReturn;
 }
 
+void LaserTransceiver::setReceiveThreshold(unsigned int val) {
+  analogThreshold = val;
+}
+
 void LaserTransceiver::tickTransmitter() {
   unsigned long now = millis();
   
