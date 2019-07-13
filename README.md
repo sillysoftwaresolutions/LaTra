@@ -3,7 +3,7 @@ An Arduino library and project to transceive data via laser.
 
 # Circuit Diagram
 
-coming soon
+![](LaTra_Schaltplan.png)
 
 # History
 
