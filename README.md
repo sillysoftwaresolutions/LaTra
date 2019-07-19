@@ -5,6 +5,7 @@ An Arduino library and project to transceive data via laser.
 
 ![](LaTra_Schaltplan.png)
 
+(nicht 633nm)
 # History
 
 07.07.2019 v0.1_TC * Erste Version\
