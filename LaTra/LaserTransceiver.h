@@ -13,6 +13,7 @@ class LaserTransceiver {
     void setReceiveThreshold(uint16_t val);
     byte getReceiveByte();
     bool getReceiveByteAvailable();
+    uint16_t getAnalogVal();
 
   private:
     bool bitDecode();
@@ -43,7 +44,7 @@ class LaserTransceiver {
     byte receiveByteIndex = 0;
     byte receiveByteReturn = 0;
     bool receiveByteAvailable = 0;
-    unsigned int bitTime = 200;
+    unsigned int bitTime = 0;
 
 };
 

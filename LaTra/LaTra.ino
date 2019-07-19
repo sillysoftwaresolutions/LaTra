@@ -18,20 +18,25 @@ void loop() {
   while(Serial.available() > 0) {
     msg += Serial.readString();
     toTransmit = 1;
-    Serial.print(msg);
-    Serial.println(msg.length());
   }
   
   if(toTransmit) {
     toTransmit = 0;
     if(msg.charAt(0) == '!') {
       msg.remove(0, 1);
-      Serial.println(msg);
-      unsigned int threshold = msg.toInt();
-      msg = "";
+      if(msg == "getAnalogVal") {
+        Serial.print("analog val is: ");
+        Serial.println(transceiver.getAnalogVal());
+        msg = "";
+      } else {
+        unsigned int threshold = msg.toInt();
+        Serial.print("changed threshold: ");
+        Serial.println(threshold);
+        msg = "";
+      }
     } else {
-      char test[msg.length()];
-      msg.toCharArray(test, msg.length());
+      char test[msg.length() + 1];
+      msg.toCharArray(test, msg.length() + 1);
       transceiver.transmit(test);
       
       while(!transceiver.getTransmitFinished()) {
@@ -42,10 +47,11 @@ void loop() {
     }
   }
   
-  /*
+  
   if(transceiver.getReceiveByteAvailable()) {
-    Serial.println(transceiver.getReceiveByte());
+    Serial.print("got Char: ");
+    Serial.println(char(transceiver.getReceiveByte()));
   }
-  */
+  
 
 }

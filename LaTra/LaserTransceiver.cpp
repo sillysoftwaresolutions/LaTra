@@ -6,6 +6,7 @@ LaserTransceiver::LaserTransceiver(uint8_t lPin, uint16_t baseL, uint8_t ldPin) 
   ldrPin = ldPin;
   baseLength = baseL;
   halfClock = 2 * baseLength;
+  bitTime = baseLength;
   pinMode(laserPin, OUTPUT);
 }
 
@@ -35,6 +36,10 @@ byte LaserTransceiver::getReceiveByte() {
 
 void LaserTransceiver::setReceiveThreshold(unsigned int val) {
   analogThreshold = val;
+}
+
+uint16_t LaserTransceiver::getAnalogVal() {
+  return analogRead(ldrPin);
 }
 
 void LaserTransceiver::tickTransmitter() {
@@ -91,47 +96,32 @@ void LaserTransceiver::tickTransmitter() {
 void LaserTransceiver::tickReceiver() {
   bool thisBit = this->bitDecode();
 
-  // wenn keine Flanke => nicht relevant
-  // wird als erstes geprüft, damit nicht unnötig die dTime berechnet werden muss
-  if(thisBit == oldBit) {return;} 
-  oldBit = thisBit;  // jetzt brauche ich oldBit eig nicht mehr
+  if(thisBit == oldBit) return; 
+  oldBit = thisBit;  
 
   unsigned long now = millis();
   unsigned long dTime = now - lastEdge;
 
-  // wenn die Zeit seit der letzten Flanke größer als 2 bitTime ist, dann beginnt ein neuer Frame
-  // -> die bitTime ist ja eig noch nicht definiert ?!
-  // -> technisch würde 1,25 * bitTime reichen. Ich glaube so ist es durch die Multiplikation mit 2
-  //    (die ja bei jeder Flanke gemacht werden muss um zu bestimmen, ob es noch eine bitTime ist) insgesamt schneller
-  // -> ob es eine positive oder negative Flanke ist, ist ja eig nicht relevant
   if(dTime > bitTime * 2){
-    // => neuer Frame
-    Serial.println("new frame");
-    lastEdge = now;  // für die Clocksync
-    receiveByteIndex = 255;  // da ich in dem Byte noch platz hab verwende ich es, um zu speichern, dass ich grad
-                             // die clockSync mache 
+    lastEdge = now; 
+    receiveByteIndex = 255;  
+    
   }else if(receiveByteIndex == 255){
-    // => zweite Flanke der clkSync 
-    // die "Übertragene Zeitspanne" ist die neue bitTime
-    Serial.print("new bitTime: ");
     bitTime = dTime;
-    Serial.println(bitTime);
-    receiveByteIndex = 0;  // alles wird resettet
+    receiveByteIndex = 0;  
     receiveByte = 0;
-  }else if(dTime > bitTime * 0.75){  // ich weiß nicht, ob die Multiplikation mit 0,75 für die Rechenleistung so gut ist
-    // => Übertragenes bit, da alle anderen Fälle sind bereits "abgefangen" worden sind
+    
+  }else if(dTime > bitTime * 0.75){  
     receiveByte |= thisBit << receiveByteIndex;
     receiveByteIndex++;
     if(receiveByteIndex > 7) {
-      Serial.print("new byte: ");
-      Serial.print(char(receiveByte));
       receiveByteIndex = 0;
       receiveByteAvailable = 1;
       receiveByteReturn = receiveByte;
       receiveByte = 0;
     }
   }  else {
-    return;  // => halbe bitTime => wird Ignoriert (durch das return wird diese Flanke nicht als lastEdge gespeichert)
+    return;
   }
   
   lastEdge = now;
@@ -140,7 +130,6 @@ void LaserTransceiver::tickReceiver() {
 
 bool LaserTransceiver::bitDecode() {
   int analogVal = analogRead(ldrPin);
-  //Serial.println(analogVal);
   if(analogVal >= analogThreshold) {
     return 1;
   } else {
