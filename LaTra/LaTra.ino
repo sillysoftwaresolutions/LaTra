@@ -2,16 +2,30 @@
 
 #include "LaserTransceiver.h"
 
-LaserTransceiver transceiver(3, 40, A1);
+// Laser Pin; base_time; ldr_pin
+LaserTransceiver transceiver(3, 1000, A0);
+//LaserTransceiver transceiver(PC13, 1000, PA1);  // for stm32
 
 String msg;
 
 void setup() {
   Serial.begin(115200);
-
+  transceiver.setLaserInverted(true);
 }
 
 void loop() {
+  loop_transmitter();
+  loop_receiver();
+}
+
+void loop_receiver(){
+  if(transceiver.getReceiveByteAvailable()) {
+    Serial.print("got Char: ");
+    Serial.println(char(transceiver.getReceiveByte()));
+  }
+}
+
+void loop_transmitter(){
   bool toTransmit = 0;
   transceiver.tickReceiver();
   
@@ -24,9 +38,13 @@ void loop() {
     toTransmit = 0;
     if(msg.charAt(0) == '!') {
       msg.remove(0, 1);
-      if(msg == "getAnalogVal") {
+      if(msg == "getAnalogVal" || msg == "getAnalogVal\n") {
         Serial.print("analog val is: ");
         Serial.println(transceiver.getAnalogVal());
+        msg = "";
+      } else if(msg == "getAnalogValLaserHIGH") {
+        Serial.print("analog val is: ");
+        Serial.println(transceiver.getAnalogValLaserHIGH());
         msg = "";
       } else {
         unsigned int threshold = msg.toInt();
@@ -46,12 +64,4 @@ void loop() {
       msg = "";
     }
   }
-  
-  
-  if(transceiver.getReceiveByteAvailable()) {
-    Serial.print("got Char: ");
-    Serial.println(char(transceiver.getReceiveByte()));
-  }
-  
-
 }

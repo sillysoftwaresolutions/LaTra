@@ -14,10 +14,17 @@ class LaserTransceiver {
     byte getReceiveByte();
     bool getReceiveByteAvailable();
     uint16_t getAnalogVal();
+    uint16_t getAnalogValLaserHIGH();
 
+    //Settings:
+    void setLaserInverted(bool val);
+    void setLdrInverted(bool val);
+    
   private:
+    void writeLaser(bool state);
     bool bitDecode();
-  
+    bool laserInverted;
+    bool ldrInverted;
     uint8_t laserPin;
     uint8_t ldrPin;
     
